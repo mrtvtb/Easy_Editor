@@ -4,7 +4,9 @@ from PyQt5.QtWidgets import (
    QLabel, QPushButton, QListWidget,
    QHBoxLayout, QVBoxLayout
 )
-
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
+from PIL import Image
 import os
 
 app = QApplication([])
@@ -72,6 +74,51 @@ def showFilenamesList():
 btn_dir.clicked.connect(showFilenamesList)
 
 
+class ImageProcessor():
+   def __init__(self):
+      self.filename = None
+      self.directory = None
+      self.full = None
+      self.save_dir = 'modified/'
+      self.image = None
+
+   def loadImage(self, dir, filename):
+      self.filename = filename
+      self.directory = dir
+      self.full = os.path.join(workdir, filename)
+      self.image = Image.open(os.path.join(workdir, filename))
+
+   def showImage(self, path):
+      lb_image.hide()
+      pic = QPixmap(path)
+      w, h = lb_image.width(), lb_image.height()
+      pic = pic.scaled(w, h, Qt.KeepAspectRatio)
+      lb_image.setPixmap(pic)
+      lb_image.show()
+
+   def saveImage(self):
+      save_path = os.path.join(self.directory, self.save_dir)
+      if not(os.path.exists(save_path) or os.path.isdir(save_path)):
+         os.mkdir(save_path)
+      self.image.save(os.path.join(save_path, self.filename))
+
+   def doBW(self):
+      self.image = self.image.convert('L')
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+
+workImage = ImageProcessor()
+
+def showChosenImage():
+   if lw_files.currentRow() >= 0:
+      filename = lw_files.currentItem().text()
+      workImage.loadImage(workdir, filename)
+      workImage.showImage(os.path.join(workdir, filename))
+
+lw_files.currentRowChanged.connect(showChosenImage)
+btn_bw.clicked.connect(workImage.doBW)
 
 win.show()
 app.exec_()
