@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PIL import Image
+from PIL import ImageEnhance
 import os
 
 app = QApplication([])
@@ -108,6 +109,31 @@ class ImageProcessor():
       image_path = os.path.join(self.directory, self.save_dir, self.filename)
       self.showImage(image_path)
 
+   def doMirror(self):
+      self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def doSharpness(self):
+      enhancer = ImageEnhance.Sharpness(self.image)
+      self.image = enhancer.enhance(2.0)  
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def doLeft(self):
+      self.image = self.image.transpose(Image.ROTATE_90)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def doRight(self):
+      self.image = self.image.transpose(Image.ROTATE_270)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
 
 workImage = ImageProcessor()
 
@@ -119,6 +145,10 @@ def showChosenImage():
 
 lw_files.currentRowChanged.connect(showChosenImage)
 btn_bw.clicked.connect(workImage.doBW)
+btn_flip.clicked.connect(workImage.doMirror)
+btn_left.clicked.connect(workImage.doLeft)
+btn_right.clicked.connect(workImage.doRight)
+btn_sharp.clicked.connect(workImage.doSharpness)
 
 win.show()
 app.exec_()
