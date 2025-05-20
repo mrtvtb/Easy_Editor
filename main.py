@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PIL import Image
 from PIL import ImageEnhance
+from colorblind import *
 import os
 
 app = QApplication([])
@@ -25,6 +26,15 @@ btn_flip = QPushButton("Дзеркало")
 btn_sharp = QPushButton("Різкість")
 btn_bw = QPushButton("Ч/Б")
 
+btn_PA = QPushButton("Протанономалія")
+btn_PP = QPushButton("Протанопія")
+
+btn_DA = QPushButton("Дейтераномалія")
+btn_DP = QPushButton("Дейтеранопія")
+
+btn_TA = QPushButton("Трітаномалія")
+btn_TP = QPushButton("Трітанопія")
+
 row = QHBoxLayout()
 col1 = QVBoxLayout()
 col2 = QVBoxLayout()
@@ -38,6 +48,19 @@ row_tools.addWidget(btn_flip)
 row_tools.addWidget(btn_sharp)
 row_tools.addWidget(btn_bw)
 col2.addLayout(row_tools)
+
+row_tools2 = QHBoxLayout()
+anomaly_col = QVBoxLayout()
+anopy_col = QVBoxLayout()
+anomaly_col.addWidget(btn_PA)
+anomaly_col.addWidget(btn_DA)
+anomaly_col.addWidget(btn_TA)
+anopy_col.addWidget(btn_PP)
+anopy_col.addWidget(btn_DP)
+anopy_col.addWidget(btn_TP)
+row_tools2.addLayout(anomaly_col)
+row_tools2.addLayout(anopy_col)
+col2.addLayout(row_tools2)
 
 row.addLayout(col1, 20)
 row.addLayout(col2, 80)
@@ -134,6 +157,42 @@ class ImageProcessor():
       image_path = os.path.join(self.directory, self.save_dir, self.filename)
       self.showImage(image_path)
 
+   def protanopia(self):
+      self.image = correct_for_protanopia(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def protanomaly(self):
+      self.image = correct_for_protanomaly(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def deuteranopia(self):
+      self.image = correct_for_deuteranopia(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def deuteranomaly(self):
+      self.image = correct_for_deuteranomaly(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def tritanopia(self):
+      self.image = correct_for_tritanopia(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
+   def tritanomaly(self):
+      self.image = correct_for_tritanomaly(self.full)
+      self.saveImage()
+      image_path = os.path.join(self.directory, self.save_dir, self.filename)
+      self.showImage(image_path)
+
 
 workImage = ImageProcessor()
 
@@ -149,6 +208,12 @@ btn_flip.clicked.connect(workImage.doMirror)
 btn_left.clicked.connect(workImage.doLeft)
 btn_right.clicked.connect(workImage.doRight)
 btn_sharp.clicked.connect(workImage.doSharpness)
+btn_PP.clicked.connect(workImage.protanopia)
+btn_DP.clicked.connect(workImage.deuteranopia)
+btn_TP.clicked.connect(workImage.tritanopia)
+btn_PA.clicked.connect(workImage.protanomaly)
+btn_DA.clicked.connect(workImage.deuteranomaly)
+btn_TA.clicked.connect(workImage.tritanomaly)
 
 win.show()
 app.exec_()
